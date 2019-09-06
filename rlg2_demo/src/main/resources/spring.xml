@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation=
+	"http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-4.2.xsd 
+	http://www.springframework.org/schema/context 
+	http://www.springframework.org/schema/context/spring-context-4.2.xsd
+	http://www.springframework.org/schema/aop
+	http://www.springframework.org/schema/aop/spring-aop.xsd
+	http://www.springframework.org/schema/tx
+	http://www.springframework.org/schema/tx/spring-tx.xsd">
+<!--引入外部配置文件-->
+  <context:property-placeholder location="classpath:db.properties"/>
+    <!--使用注解方式-->
+    <context:component-scan base-package="com.itdr">
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
+	<!--创建连接池-->
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="${jdbc.driverclass}"/>
+		<property name="url" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.username}"/>
+		<property name="password" value="${jdbc.password}"/>
+	</bean>
+	<!--创建依赖sqlsession工厂-->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="configLocation" value="classpath:sqlMapConfig.xml"/>
+		<property name="dataSource" ref="dataSource"/>
+  	</bean>
+
+	<!--日志框架-->
+
+    <!--扫描包配置bean-->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.itdr.mappers"/>
+    </bean>
+<!--动态代理 配置多个Beankeyime ?-->
+    <!--<bean id="productDao2" class="org.mybatis.spring.mapper.MapperFactoryBean">-->
+        <!--<property name="mapperInterface" value="com.itdr.dao.UserMapper"/>-->
+        <!--<property name="sqlSessionFactory" ref="sqlSessionFactory"/>-->
+    <!--</bean>-->
+    <!--<bean id="userDao2" class="org.mybatis.spring.mapper.MapperFactoryBean">-->
+        <!--<property name="mapperInterface" value="com.itdr.dao.UserDao"/>-->
+        <!--<property name="sqlSessionFactory" ref="sqlSessionFactory"/>-->
+    <!--</bean>-->
+	<!---->
+	<!--<bean id="productDao" class="com.itdr.dao.ProductDaoImp">-->
+		<!--<property name="sqlSessionFactory" ref="sqlSessionFactory" />-->
+	<!--</bean>-->
+</beans>
